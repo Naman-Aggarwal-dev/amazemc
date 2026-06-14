@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Lost in the Void | AmazeMC</title>
+    <link rel="icon" type="png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .void-scene {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+        .void-scene .mc-title {
+            font-size: clamp(6rem, 20vw, 12rem);
+        }
+        .void-particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .vp {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #888;
+            animation: void-float 4s infinite ease-in-out;
+        }
+        @keyframes void-float {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.2; }
+            50% { transform: translateY(-30px) scale(1.5); opacity: 0.8; }
+        }
+        .void-content { position: relative; z-index: 10; }
+    </style>
+</head>
+<body>
+    <div class="void-particles" id="void-particles"></div>
+    <div id="custom-cursor">
+        <svg viewBox="0 0 40 40" class="cursor-svg">
+            <rect class="ch-line" x="19" y="10" width="2" height="20" />
+            <rect class="ch-line" x="10" y="19" width="20" height="2" />
+            <polyline class="v-corner v-top-left" points="14,18 14,14 18,14" />
+            <polyline class="v-corner v-top-right" points="22,14 26,14 26,18" />
+            <polyline class="v-corner v-bottom-left" points="14,22 14,26 18,26" />
+            <polyline class="v-corner v-bottom-right" points="22,26 26,26 26,22" />
+        </svg>
+    </div>
+
+    <div class="void-scene">
+        <div class="void-content">
+            <div class="mc-title">404</div>
+            <p class="mc-subtitle" style="font-size:2rem">YOU FELL INTO THE VOID</p>
+            <p class="text-zinc-400 text-xl mt-6 mb-8">This page does not exist in this dimension.</p>
+            <a href="index.html" class="mc-button inline-flex px-8 py-4 clickable" style="text-decoration:none;font-size:1.8rem">
+                ↩ RETURN TO SPAWN
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('void-particles');
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.className = 'vp';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animationDelay = (Math.random() * 5) + 's';
+            p.style.animationDuration = (3 + Math.random() * 4) + 's';
+            p.style.width = p.style.height = (1 + Math.random() * 3) + 'px';
+            container.appendChild(p);
+        }
+    </script>
+    <script src="app.js"></script>
+    <style>
+        #loading-screen, #notification, #scroll-top, #main-content { display: none !important; }
+    </style>
+</body>
+</html>

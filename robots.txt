@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://amazemc.vercel.app/sitemap.xml

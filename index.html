@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmazeMC | Survival Economy</title>
+    <link rel="icon" type="png" href="favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="stars-container"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <div id="custom-cursor">
+        <svg viewBox="0 0 40 40" class="cursor-svg">
+            <rect class="ch-line" x="19" y="10" width="2" height="20" />
+            <rect class="ch-line" x="10" y="19" width="20" height="2" />
+            <polyline class="v-corner v-top-left" points="14,18 14,14 18,14" />
+            <polyline class="v-corner v-top-right" points="22,14 26,14 26,18" />
+            <polyline class="v-corner v-bottom-left" points="14,22 14,26 18,26" />
+            <polyline class="v-corner v-bottom-right" points="22,26 26,26 26,22" />
+        </svg>
+    </div>
+
+    <!-- Minecraft Item Icons Sprite - Redesigned with accurate pixel-art textures -->
+    <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <!-- Gold Ingot - Minecraft's actual gold ingot texture -->
+            <g id="icon-gold-ingot">
+                <rect x="4" y="1" width="8" height="14" rx="1" fill="#ffd454"/>
+                <rect x="5" y="2" width="2" height="12" fill="#ffee66" opacity=".6"/>
+                <rect x="3" y="3" width="1" height="4" fill="#cc9900"/>
+                <rect x="12" y="3" width="1" height="4" fill="#cc9900"/>
+                <rect x="3" y="9" width="1" height="3" fill="#cc9900"/>
+                <rect x="12" y="9" width="1" height="3" fill="#cc9900"/>
+                <rect x="7" y="0" width="2" height="2" fill="#ffee66"/>
+                <rect x="5" y="3" width="1" height="1" fill="#fff" opacity=".3"/>
+                <rect x="9" y="10" width="1" height="1" fill="#a37800" opacity=".4"/>
+            </g>
+            <!-- Grass Block - Authentic top+dirt side texture -->
+            <g id="icon-grass-block">
+                <rect x="1" y="1" width="14" height="14" fill="#6bb34a"/>
+                <rect x="1" y="9" width="14" height="6" fill="#8a643d"/>
+                <rect x="1" y="9" width="14" height="1" fill="#5a9e3f"/>
+                <rect x="3" y="3" width="2" height="2" fill="#7cc45a" opacity=".6"/>
+                <rect x="8" y="4" width="3" height="1" fill="#7cc45a" opacity=".5"/>
+                <rect x="4" y="11" width="2" height="2" fill="#7a5535" opacity=".7"/>
+                <rect x="10" y="12" width="3" height="2" fill="#7a5535" opacity=".6"/>
+                <rect x="2" y="13" width="2" height="1" fill="#6a4525" opacity=".5"/>
+                <rect x="1" y="9" width="14" height="1" fill="#4a8e2f"/>
+                <rect x="3" y="5" width="1" height="1" fill="#7cc45a" opacity=".4"/>
+            </g>
+            <!-- Diamond Pickaxe - Proper tool shape -->
+            <g id="icon-pickaxe">
+                <rect x="6" y="11" width="4" height="3" fill="#6d3b1a"/>
+                <rect x="5" y="14" width="6" height="2" fill="#5a2e12"/>
+                <rect x="4" y="16" width="8" height="2" fill="#4a2408"/>
+                <polygon points="8,0 4,5 6,7 3,10 5,12 11,6" fill="#3bcbfa"/>
+                <polygon points="7,1 5,5 6,6 4,9 5,10 9,6" fill="#5ddbff" opacity=".7"/>
+                <rect x="3" y="11" width="2" height="2" fill="#3bcbfa"/>
+                <rect x="11" y="7" width="2" height="3" fill="#3bcbfa"/>
+                <rect x="7" y="2" width="2" height="1" fill="#9ef" opacity=".5"/>
+            </g>
+            <!-- Chest - Minecraft chest with lock -->
+            <g id="icon-chest">
+                <rect x="2" y="3" width="12" height="11" fill="#6d3b1a"/>
+                <rect x="2" y="3" width="12" height="3" fill="#8a4f28"/>
+                <rect x="2" y="3" width="12" height="1" fill="#a86232" opacity=".5"/>
+                <rect x="7" y="7" width="2" height="4" fill="#f4b93b"/>
+                <rect x="7" y="7" width="2" height="1" fill="#fcdb5c"/>
+                <rect x="8" y="9" width="1" height="1" fill="#cc7a00"/>
+                <rect x="4" y="5" width="2" height="1" fill="#a86232" opacity=".5"/>
+                <rect x="8" y="5" width="2" height="1" fill="#a86232" opacity=".5"/>
+                <rect x="3" y="9" width="10" height="1" fill="#4a2408" opacity=".3"/>
+                <rect x="2" y="13" width="12" height="1" fill="#4a2408"/>
+            </g>
+            <!-- Enchanting Table - The actual enchanting table -->
+            <g id="icon-enchanting-table">
+                <rect x="2" y="9" width="12" height="5" fill="#2a1045"/>
+                <rect x="2" y="9" width="12" height="1" fill="#3d2060" opacity=".5"/>
+                <rect x="3" y="10" width="10" height="3" fill="#1a0830"/>
+                <rect x="5" y="2" width="6" height="7" fill="#3d2060"/>
+                <rect x="6" y="3" width="4" height="5" fill="#2a1045"/>
+                <rect x="7" y="4" width="2" height="3" fill="#5a3a8a"/>
+                <rect x="6" y="5" width="4" height="1" fill="#7a5aaa" opacity=".6"/>
+                <rect x="3" y="14" width="10" height="1" fill="#0a0020"/>
+                <rect x="7" y="3" width="1" height="1" fill="#9a7aca" opacity=".5"/>
+                <rect x="6" y="7" width="1" height="1" fill="#4a2a6a" opacity=".5"/>
+            </g>
+            <!-- Present/Gift - Minecraft chest-like present -->
+            <g id="icon-gift">
+                <rect x="2" y="6" width="12" height="8" fill="#e83838"/>
+                <rect x="2" y="6" width="12" height="2" fill="#c62a2a"/>
+                <rect x="6" y="2" width="4" height="12" fill="#fcdb5c"/>
+                <rect x="2" y="5" width="12" height="2" fill="#b02020"/>
+                <rect x="6" y="3" width="4" height="2" fill="#fce88c" opacity=".6"/>
+                <rect x="4" y="7" width="2" height="6" fill="#f05050" opacity=".4"/>
+                <rect x="9" y="7" width="3" height="5" fill="#f05050" opacity=".3"/>
+                <rect x="7" y="8" width="2" height="1" fill="#b02020" opacity=".5"/>
+            </g>
+            <!-- Shulker Box - Recognizable shulker shell texture -->
+            <g id="icon-shulker-box">
+                <rect x="2" y="2" width="12" height="12" fill="#7a3a7a"/>
+                <rect x="2" y="2" width="12" height="3" fill="#9a5a9a"/>
+                <rect x="2" y="2" width="12" height="1" fill="#ba7aba" opacity=".4"/>
+                <rect x="3" y="4" width="2" height="1" fill="#ca8aca" opacity=".3"/>
+                <rect x="6" y="8" width="4" height="3" fill="#5a2a5a"/>
+                <rect x="7" y="9" width="2" height="1" fill="#8a5a8a" opacity=".5"/>
+                <rect x="2" y="13" width="12" height="1" fill="#4a1a4a"/>
+                <rect x="3" y="10" width="2" height="2" fill="#ca8aca" opacity=".2"/>
+                <rect x="9" y="10" width="2" height="2" fill="#ca8aca" opacity=".2"/>
+            </g>
+            <!-- XP Bottle - Splash potion with XP green -->
+            <g id="icon-xp-bottle">
+                <rect x="6" y="1" width="4" height="2" fill="#8a8a8a"/>
+                <rect x="5" y="3" width="6" height="3" fill="#a0a0a0"/>
+                <rect x="5" y="3" width="6" height="1" fill="#b8b8b8" opacity=".5"/>
+                <rect x="4" y="6" width="8" height="8" rx="1" fill="#5adb3a"/>
+                <rect x="4" y="6" width="8" height="3" fill="#42b52a" opacity=".6"/>
+                <rect x="5" y="7" width="2" height="2" fill="#7ce85c" opacity=".5"/>
+                <rect x="8" y="9" width="2" height="2" fill="#7ce85c" opacity=".4"/>
+                <rect x="4" y="13" width="8" height="1" fill="#2a8a1a"/>
+                <rect x="6" y="4" width="1" height="1" fill="#c8c8c8" opacity=".4"/>
+            </g>
+            <!-- Compass - Accurate needle compass -->
+            <g id="icon-compass">
+                <circle cx="8" cy="8" r="7" fill="#4a4a4a"/>
+                <circle cx="8" cy="8" r="6" fill="#3a3a3a"/>
+                <circle cx="8" cy="8" r="5" fill="#2a2a2a"/>
+                <polygon points="8,1 10,8 8,15 6,8" fill="#e83838"/>
+                <polygon points="8,1 10,8 8,8 6,8" fill="#f85050" opacity=".7"/>
+                <polygon points="1,8 8,6 15,8 8,10" fill="#d0d0d0"/>
+                <polygon points="1,8 8,6 8,8 8,10" fill="#e8e8e8" opacity=".7"/>
+                <circle cx="8" cy="8" r="1.5" fill="#1a1a1a"/>
+            </g>
+            <!-- Shield - Minecraft shield pattern -->
+            <g id="icon-shield">
+                <path d="M3 1L1 4v6c0 4 3.5 7 7 8 3.5-1 7-4 7-8V4l-2-3H3z" fill="#888"/>
+                <path d="M4 2L2 5v5c0 3 3 6 6 7 3-1 6-4 6-7V5l-2-3H4z" fill="#aaa"/>
+                <path d="M5 3L3 6v4c0 2.5 2.5 5 5 6 2.5-1 5-3.5 5-6V6l-2-3H5z" fill="#ccc"/>
+                <path d="M7 6L5 9l2 2 4-5-1-1-3 3z" fill="#55ff55"/>
+                <path d="M4 4l1-1v2l-1-1zM12 4l-1-1v2l1-1z" fill="#666"/>
+            </g>
+            <!-- Lightning Bolt - Dramatic thunderbolt -->
+            <g id="icon-lightning">
+                <polygon points="10,0 3,10 7,10 5,16 14,7 9,7" fill="#fcdb5c"/>
+                <polygon points="9,1 4,9 7,9 6,14 12,8 8,8" fill="#fce88c" opacity=".6"/>
+                <polygon points="8,2 6,8 8,8 7,11 10,7 8,7" fill="#fff" opacity=".3"/>
+            </g>
+            <!-- Diamond Sword - Iconic Minecraft sword -->
+            <g id="icon-sword">
+                <rect x="7" y="0" width="2" height="11" fill="#3bcbfa"/>
+                <rect x="5" y="1" width="6" height="2" fill="#3bcbfa"/>
+                <rect x="4" y="3" width="8" height="2" fill="#3bcbfa"/>
+                <rect x="6" y="11" width="4" height="3" fill="#6d3b1a"/>
+                <rect x="5" y="14" width="6" height="2" fill="#5a2e12"/>
+                <rect x="4" y="16" width="8" height="1" fill="#4a2408"/>
+                <rect x="6" y="1" width="1" height="10" fill="#5ddbff" opacity=".5"/>
+                <rect x="8" y="4" width="1" height="1" fill="#9ef" opacity=".3"/>
+            </g>
+            <!-- Stats/Bar Chart - Colorful data bars -->
+            <g id="icon-chart">
+                <rect x="1" y="1" width="14" height="14" fill="none" stroke="#fff" stroke-width="1" rx="1"/>
+                <rect x="3" y="10" width="2" height="4" fill="#43c64d"/>
+                <rect x="3" y="9" width="2" height="1" fill="#6de877" opacity=".5"/>
+                <rect x="7" y="6" width="2" height="8" fill="#3bcbfa"/>
+                <rect x="7" y="5" width="2" height="1" fill="#6ddefc" opacity=".5"/>
+                <rect x="11" y="8" width="2" height="6" fill="#fcdb5c"/>
+                <rect x="11" y="7" width="2" height="1" fill="#fce88c" opacity=".5"/>
+            </g>
+            <!-- Law Book - Closed book with scale -->
+            <g id="icon-law-book">
+                <rect x="2" y="2" width="12" height="12" rx="1" fill="#8a4f28"/>
+                <rect x="2" y="2" width="12" height="1" fill="#a86232" opacity=".5"/>
+                <rect x="3" y="3" width="10" height="10" fill="#6d3b1a"/>
+                <rect x="3" y="3" width="5" height="10" fill="#4a2408"/>
+                <rect x="5" y="5" width="6" height="1" fill="#d4c8a0" opacity=".4"/>
+                <rect x="5" y="7" width="6" height="1" fill="#d4c8a0" opacity=".4"/>
+                <rect x="5" y="9" width="4" height="1" fill="#d4c8a0" opacity=".4"/>
+                <rect x="10" y="9" width="1" height="2" fill="#d4c8a0" opacity=".3"/>
+            </g>
+            <!-- Vote Paper - Ballot paper with check -->
+            <g id="icon-vote-paper">
+                <rect x="3" y="1" width="10" height="14" fill="#e8e8e8"/>
+                <rect x="3" y="1" width="10" height="1" fill="#f8f8f8" opacity=".5"/>
+                <rect x="3" y="14" width="10" height="1" fill="#c8c8c8"/>
+                <rect x="4" y="3" width="6" height="1" fill="#c8c8c8"/>
+                <rect x="4" y="5" width="8" height="1" fill="#c8c8c8"/>
+                <rect x="4" y="7" width="5" height="1" fill="#c8c8c8"/>
+                <rect x="4" y="9" width="7" height="1" fill="#c8c8c8"/>
+                <path d="M9 10l-3 3-2-2 1-1 1 1 2-2 1 1z" fill="#43c64d"/>
+            </g>
+            <!-- Wiki Book - Open book with text -->
+            <g id="icon-wiki-book">
+                <path d="M1 3c1-1 2.5-1.5 4-1.5v10c-1.5 0-3 .5-4 1.5V3z" fill="#8a4f28"/>
+                <path d="M15 3c-1-1-2.5-1.5-4-1.5v10c1.5 0 3 .5 4 1.5V3z" fill="#8a4f28"/>
+                <path d="M5 2.5c1.5 0 3 .5 4 1.5 1-1 2.5-1.5 4-1.5v9.5c-1.5 0-3 .5-4 1.5-1-1-2.5-1.5-4-1.5V2.5z" fill="#f4e8c8"/>
+                <path d="M5 3.5v7.5c1 0 2 .3 3 .8V4.5c-1-.5-2-.8-3-1zM11 3.5v7.5c-1 0-2 .3-3 .8V4.5c1-.5 2-.8 3-1z" fill="#e4d4a8"/>
+                <rect x="6" y="4" width="1" height="1" fill="#c8b888" opacity=".5"/>
+                <rect x="6" y="6" width="2" height="1" fill="#c8b888" opacity=".5"/>
+                <rect x="6" y="8" width="1" height="1" fill="#c8b888" opacity=".5"/>
+                <rect x="10" y="4" width="2" height="1" fill="#c8b888" opacity=".5"/>
+                <rect x="10" y="6" width="1" height="1" fill="#c8b888" opacity=".5"/>
+            </g>
+            <!-- Crown - Royal Minecraft crown -->
+            <g id="icon-crown">
+                <polygon points="1,11 3,4 5,7 8,2 11,7 13,4 15,11" fill="#fcdb5c"/>
+                <polygon points="2,11 14,11 14,14 2,14" fill="#cc9900"/>
+                <rect x="7" y="12" width="2" height="2" fill="#e8a800"/>
+                <circle cx="8" cy="4" r="1.5" fill="#e83838"/>
+                <circle cx="8" cy="4" r=".8" fill="#f85050" opacity=".6"/>
+                <rect x="3" y="11" width="2" height="1" fill="#ffee66" opacity=".4"/>
+                <rect x="11" y="11" width="2" height="1" fill="#ffee66" opacity=".4"/>
+                <rect x="2" y="13" width="12" height="1" fill="#a37800"/>
+            </g>
+            <!-- Clipboard - Paper with clip -->
+            <g id="icon-clipboard">
+                <rect x="5" y="1" width="6" height="2" fill="#aaa"/>
+                <rect x="5" y="1" width="6" height="1" fill="#ccc"/>
+                <rect x="3" y="3" width="10" height="12" fill="#e8e8e8"/>
+                <rect x="3" y="3" width="10" height="1" fill="#f8f8f8" opacity=".5"/>
+                <rect x="3" y="14" width="10" height="1" fill="#c8c8c8"/>
+                <rect x="4" y="5" width="8" height="1" fill="#c8c8c8"/>
+                <rect x="4" y="7" width="6" height="1" fill="#c8c8c8"/>
+                <rect x="4" y="9" width="8" height="1" fill="#c8c8c8"/>
+                <rect x="4" y="11" width="5" height="1" fill="#c8c8c8"/>
+                <rect x="3" y="3" width="2" height="12" fill="#ccc"/>
+                <rect x="3" y="3" width="2" height="1" fill="#ddd" opacity=".5"/>
+            </g>
+            <!-- Firework Rocket - Minecraft firework -->
+            <g id="icon-rocket">
+                <rect x="6" y="3" width="4" height="8" fill="#ddd"/>
+                <rect x="6" y="3" width="4" height="1" fill="#eee" opacity=".5"/>
+                <rect x="5" y="11" width="6" height="3" fill="#e83838"/>
+                <rect x="5" y="11" width="6" height="1" fill="#f05050" opacity=".5"/>
+                <polygon points="8,0 5,4 11,4" fill="#fcdb5c"/>
+                <polygon points="8,1 6,4 10,4" fill="#fce88c" opacity=".5"/>
+                <rect x="7" y="5" width="2" height="5" fill="#bbb"/>
+                <rect x="6" y="12" width="4" height="1" fill="#c62a2a"/>
+                <circle cx="6" cy="2" r="1" fill="#fcdb5c"/>
+                <circle cx="10" cy="2" r="1" fill="#fcdb5c"/>
+                <circle cx="8" cy="1" r="1" fill="#fce88c"/>
+                <circle cx="8" cy="0" r=".6" fill="#fff" opacity=".5"/>
+            </g>
+            <!-- Key - Golden minecraft key -->
+            <g id="icon-key">
+                <rect x="8" y="7" width="6" height="2" fill="#fcdb5c"/>
+                <rect x="12" y="5" width="2" height="2" fill="#fcdb5c"/>
+                <rect x="12" y="9" width="2" height="2" fill="#fcdb5c"/>
+                <circle cx="5" cy="8" r="4" fill="#fcdb5c"/>
+                <circle cx="5" cy="8" r="3" fill="#e8a800"/>
+                <circle cx="5" cy="8" r="1.5" fill="#cc9900"/>
+                <rect x="4" y="7" width="2" height="2" fill="#ffee66" opacity=".4"/>
+                <rect x="8" y="7" width="1" height="2" fill="#ffee66" opacity=".3"/>
+                <rect x="14" y="6" width="1" height="4" fill="#cc9900"/>
+            </g>
+            <!-- Medal - Gold medal with ribbon -->
+            <g id="icon-medal">
+                <circle cx="8" cy="6" r="5" fill="#fcdb5c"/>
+                <circle cx="8" cy="6" r="4" fill="#e8a800"/>
+                <circle cx="8" cy="6" r="2.5" fill="#fcdb5c"/>
+                <circle cx="8" cy="6" r="1" fill="#cc9900"/>
+                <polygon points="6,10 8,15 10,10" fill="#e83838"/>
+                <polygon points="6,10 8,14 10,10" fill="#c62a2a"/>
+                <polygon points="7,11 8,14 9,11" fill="#b02020"/>
+                <rect x="7" y="13" width="2" height="2" fill="#8a1a1a"/>
+                <rect x="6" y="9" width="4" height="1" fill="#f05050" opacity=".5"/>
+            </g>
+            <!-- Direction Arrow Sign - Like Minecraft sign post -->
+            <g id="icon-direction">
+                <rect x="3" y="2" width="10" height="12" fill="#7a5535"/>
+                <rect x="3" y="2" width="10" height="1" fill="#9a6d4a" opacity=".4"/>
+                <rect x="3" y="13" width="10" height="1" fill="#5a3a20"/>
+                <polygon points="8,3 13,8 10,8 10,12 6,12 6,8 3,8" fill="#fcdb5c"/>
+                <polygon points="8,4 11,7 9,7 9,11 7,11 7,7 5,7" fill="#fce88c" opacity=".5"/>
+            </g>
+            <!-- Eye of Ender - The ender eye texture -->
+            <g id="icon-ender-eye">
+                <ellipse cx="8" cy="9" rx="5" ry="4" fill="#1a4a4a"/>
+                <ellipse cx="8" cy="9" rx="4" ry="3" fill="#2a6a6a"/>
+                <ellipse cx="8" cy="9" rx="2.5" ry="2" fill="#4a9a9a"/>
+                <ellipse cx="8" cy="9" rx="1" ry=".8" fill="#8adada"/>
+                <circle cx="7" cy="8" r=".5" fill="#aef" opacity=".6"/>
+                <rect x="5" y="3" width="6" height="3" rx="1" fill="#2a1a0a"/>
+                <rect x="6" y="2" width="4" height="2" rx="1" fill="#3a2a1a"/>
+                <rect x="7" y="1" width="2" height="1" fill="#4a3a2a" opacity=".5"/>
+            </g>
+        </defs>
+    </svg>
+
+    <div id="modal-overlay" onclick="closeModal()">
+        <div id="view-container" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="modal-close clickable" title="Close">X</button>
+            <div id="modal-content"></div>
+            <button onclick="closeModal()" class="mc-button w-full mt-6 clickable">BACK TO MENU</button>
+        </div>
+    </div>
+
+    <div id="loading-screen">
+        <div class="loading-logo">AMAZEMC</div>
+        <div class="loading-bar">
+            <div id="loading-fill"></div>
+        </div>
+        <div class="mt-4 text-xl" id="loading-text">PREPARING SPAWN...</div>
+    </div>
+
+    <div id="notification">IP COPIED!</div>
+
+    <button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="clickable">
+        <svg class="mc-icon" viewBox="0 0 16 16"><use href="#icon-lightning"/></svg>
+    </button>
+
+    <div id="main-content">
+        <!-- Floating Decorations - Real Minecraft Blocks -->
+        <div class="hero-decoration top-20 left-[5%]" style="animation-delay: 0s;">
+            <svg width="50" height="50" viewBox="0 0 16 16">
+                <rect x="1" y="1" width="14" height="14" fill="#5a9e3f"/>
+                <rect x="1" y="10" width="14" height="5" fill="#7c5c3a"/>
+                <rect x="1" y="10" width="14" height="1" fill="#4a7e2f"/>
+                <rect x="3" y="3" width="2" height="2" fill="#6abe4f" opacity=".6"/>
+                <rect x="8" y="4" width="3" height="1" fill="#6abe4f" opacity=".5"/>
+                <rect x="11" y="12" width="2" height="2" fill="#6c4c2a" opacity=".5"/>
+                <rect x="4" y="13" width="3" height="1" fill="#8c6c4a" opacity=".4"/>
+                <rect x="1" y="1" width="14" height="14" fill="none" stroke="#000" stroke-width=".5"/>
+            </svg>
+        </div>
+        <div class="hero-decoration bottom-36 right-[12%]" style="animation-delay: -2s;">
+            <svg width="45" height="45" viewBox="0 0 16 16">
+                <rect x="1" y="1" width="14" height="14" fill="#888"/>
+                <rect x="1" y="1" width="7" height="7" fill="#999"/>
+                <rect x="1" y="9" width="7" height="7" fill="#999"/>
+                <rect x="9" y="1" width="7" height="7" fill="#999"/>
+                <rect x="9" y="9" width="7" height="7" fill="#999"/>
+                <rect x="3" y="3" width="3" height="3" fill="#777" opacity=".5"/>
+                <rect x="11" y="11" width="3" height="3" fill="#777" opacity=".5"/>
+                <rect x="1" y="1" width="14" height="14" fill="none" stroke="#000" stroke-width=".5"/>
+            </svg>
+        </div>
+        <div class="hero-decoration top-36 right-[8%]" style="animation-delay: -4s;">
+            <svg width="40" height="40" viewBox="0 0 16 16">
+                <rect x="1" y="1" width="14" height="14" fill="#FFD700"/>
+                <rect x="1" y="1" width="14" height="14" fill="none" stroke="#cc9900" stroke-width="1"/>
+                <rect x="3" y="3" width="4" height="4" fill="#ffee00" opacity=".4"/>
+                <rect x="9" y="9" width="4" height="4" fill="#cc9900" opacity=".4"/>
+            </svg>
+        </div>
+        <div class="hero-decoration hero-decoration-slow bottom-20 left-[15%]" style="animation-delay: -1s;">
+            <svg width="42" height="42" viewBox="0 0 16 16">
+                <rect x="1" y="1" width="14" height="7" fill="#8B4513"/>
+                <rect x="1" y="8" width="14" height="7" fill="#a0522d"/>
+                <rect x="1" y="1" width="6" height="3" fill="#6B3410" opacity=".5"/>
+                <rect x="9" y="1" width="6" height="3" fill="#6B3410" opacity=".5"/>
+                <rect x="3" y="4" width="4" height="1" fill="#fff" opacity=".15"/>
+                <rect x="1" y="8" width="14" height="1" fill="#8B4513"/>
+                <rect x="1" y="1" width="14" height="14" fill="none" stroke="#000" stroke-width=".5"/>
+            </svg>
+        </div>
+        <div class="hero-decoration hero-decoration-slow top-28 right-[22%]" style="animation-delay: -3s;">
+            <svg width="38" height="38" viewBox="0 0 16 16">
+                <rect x="1" y="1" width="14" height="14" fill="#8B4513"/>
+                <rect x="1" y="1" width="6" height="6" fill="#a0522d"/>
+                <rect x="3" y="3" width="2" height="2" fill="#6B3410" opacity=".5"/>
+                <rect x="9" y="9" width="6" height="6" fill="#a0522d"/>
+                <rect x="1" y="1" width="14" height="14" fill="none" stroke="#000" stroke-width=".5"/>
+            </svg>
+        </div>
+        <div class="hero-decoration bottom-24 right-[25%]" style="animation-delay: -5s;">
+            <svg width="38" height="38" viewBox="0 0 16 16">
+                <rect x="1" y="1" width="14" height="14" fill="#ff4444"/>
+                <rect x="1" y="1" width="14" height="14" fill="none" stroke="#cc0000" stroke-width="1"/>
+                <rect x="3" y="3" width="4" height="4" fill="#ff6666" opacity=".5"/>
+                <circle cx="8" cy="8" r="2" fill="#ffcc00"/>
+                <rect x="7" y="5" width="2" height="1" fill="#ffcc00"/>
+                <rect x="5" y="11" width="2" height="1" fill="#ffcc00" opacity=".5"/>
+            </svg>
+        </div>
+        <div class="hero-decoration bottom-32 left-[8%]" style="animation-delay: -0.5s;animation-duration:7s">
+            <svg width="35" height="50" viewBox="0 0 16 24">
+                <rect x="7" y="0" width="2" height="12" fill="#55ffff"/>
+                <rect x="5" y="1" width="6" height="2" fill="#55ffff"/>
+                <rect x="4" y="3" width="8" height="2" fill="#55ffff"/>
+                <rect x="6" y="12" width="4" height="3" fill="#8B4513"/>
+                <rect x="5" y="15" width="6" height="2" fill="#654321"/>
+                <rect x="4" y="17" width="8" height="2" fill="#654321"/>
+                <rect x="6" y="1" width="1" height="11" fill="#fff" opacity=".3"/>
+                <rect x="0" y="0" width="16" height="24" fill="none" stroke="#000" stroke-width=".5"/>
+            </svg>
+        </div>
+        <div class="hero-decoration top-60 right-[4%]" style="animation-delay: -3s;animation-duration:8s">
+            <svg width="40" height="45" viewBox="0 0 16 20">
+                <polygon points="8,0 13,5 11,7 6,2" fill="#55ffff"/>
+                <polygon points="4,4 9,9 7,11 2,6" fill="#55ffff"/>
+                <rect x="6" y="9" width="4" height="3" fill="#8B4513"/>
+                <rect x="5" y="12" width="6" height="2" fill="#654321"/>
+                <rect x="4" y="14" width="8" height="2" fill="#654321"/>
+                <rect x="7" y="2" width="2" height="1" fill="#fff" opacity=".4"/>
+                <rect x="0" y="0" width="16" height="20" fill="none" stroke="#000" stroke-width=".5"/>
+            </svg>
+        </div>
+        <div class="hero-decoration hero-decoration-slow top-24 right-[30%]" style="animation-delay: -2s;">
+            <svg width="32" height="38" viewBox="0 0 16 16">
+                <circle cx="8" cy="8" r="7" fill="#FFD700"/>
+                <circle cx="8" cy="8" r="6" fill="#ffaa00"/>
+                <circle cx="8" cy="8" r="3" fill="#FF6666"/>
+                <rect x="7" y="0" width="2" height="3" fill="#8B4513"/>
+                <path fill="#fff" fill-opacity=".3" d="M4 6c1-1 3-1 4 0"/>
+                <circle cx="8" cy="8" r="7" fill="none" stroke="#cc9900" stroke-width=".5"/>
+            </svg>
+        </div>
+        <div class="hero-decoration bottom-20 left-[22%]" style="animation-delay: -1s;animation-duration:7s">
+            <svg width="30" height="38" viewBox="0 0 16 16">
+                <rect x="1" y="1" width="14" height="14" fill="#1a4a4a"/>
+                <rect x="1" y="1" width="14" height="14" fill="none" stroke="#0a3a3a" stroke-width="1"/>
+                <rect x="3" y="3" width="4" height="4" fill="#2a6a6a" opacity=".6"/>
+                <rect x="9" y="9" width="4" height="4" fill="#2a6a6a" opacity=".6"/>
+                <circle cx="8" cy="8" r="2" fill="#3a8a8a"/>
+                <circle cx="7" cy="7" r="1" fill="#5ababa" opacity=".7"/>
+            </svg>
+        </div>
+        <div class="hero-decoration bottom-48 right-[6%]" style="animation-delay: -2.5s;animation-duration:10s">
+            <svg width="36" height="36" viewBox="0 0 16 16">
+                <rect x="1" y="1" width="14" height="14" fill="#8B4513"/>
+                <rect x="1" y="1" width="14" height="14" fill="none" stroke="#6B3410" stroke-width="1"/>
+                <rect x="3" y="4" width="4" height="3" fill="#fff" opacity=".15"/>
+                <rect x="9" y="4" width="4" height="3" fill="#fff" opacity=".15"/>
+                <rect x="3" y="9" width="4" height="3" fill="#fff" opacity=".15"/>
+                <rect x="9" y="9" width="4" height="3" fill="#fff" opacity=".15"/>
+                <rect x="6" y="2" width="4" height="11" fill="#FFD700" opacity=".6"/>
+                <rect x="6" y="3" width="1" height="1" fill="#fff" opacity=".5"/>
+            </svg>
+        </div>
+
+        <nav class="p-6 flex justify-between items-center relative z-20">
+            <div class="text-3xl text-white tracking-widest uppercase">AMAZEMC</div>
+            <button onclick="copyIP()" class="mc-button flex-row gap-2 text-sm px-4 py-2 clickable">
+                <span class="text-green-400">●</span> AMAZEMC.ZOHO.TO:8107
+            </button>
+        </nav>
+
+        <main class="flex-grow flex flex-col items-center justify-center pt-6 px-4">
+
+            <!-- Server Status -->
+            <div id="server-status" class="mb-8 relative z-10">
+                <span class="status-dot loading" id="status-dot"></span>
+                <span id="status-text">CHECKING SERVER...</span>
+                <span class="text-zinc-500">|</span>
+                <span id="players-text" class="text-zinc-400">-- ONLINE</span>
+            </div>
+
+            <div class="text-center mb-12 relative">
+                <h1 class="mc-title">AMAZEMC</h1>
+                <p class="mc-subtitle"><span id="typewriter"></span><span class="type-cursor">_</span></p>
+            </div>
+
+            <!-- Server Features Grid -->
+            <div class="w-full max-w-5xl mx-auto mb-12 relative z-10 px-2">
+                <h2 class="section-title"><svg class="mc-icon mc-icon-lg" viewBox="0 0 16 16" style="vertical-align:middle;margin-top:-4px"><use href="#icon-lightning"/></svg> SERVER FEATURES</h2>
+                <p class="section-sub mb-6">Everything our economy realm has to offer</p>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                    <div class="feature-card clickable" onclick="openWiki()">
+                        <svg class="mc-icon feature-icon" viewBox="0 0 16 16"><use href="#icon-gold-ingot"/></svg>
+                        <h3>Custom Economy</h3>
+                        <p>/shop, /bal, /pay, /baltop</p>
+                    </div>
+                    <div class="feature-card clickable" onclick="openWiki()">
+                        <svg class="mc-icon feature-icon" viewBox="0 0 16 16"><use href="#icon-grass-block"/></svg>
+                        <h3>Land Claiming</h3>
+                        <p>Protect your builds</p>
+                    </div>
+                    <div class="feature-card clickable" onclick="openWiki()">
+                        <svg class="mc-icon feature-icon" viewBox="0 0 16 16"><use href="#icon-pickaxe"/></svg>
+                        <h3>Jobs & Skills</h3>
+                        <p>Earn while you play</p>
+                    </div>
+                    <div class="feature-card clickable" onclick="openWiki()">
+                        <svg class="mc-icon feature-icon" viewBox="0 0 16 16"><use href="#icon-chest"/></svg>
+                        <h3>Player Shops</h3>
+                        <p>ChestShop system</p>
+                    </div>
+                    <div class="feature-card clickable" onclick="openWiki()">
+                        <svg class="mc-icon feature-icon" viewBox="0 0 16 16"><use href="#icon-enchanting-table"/></svg>
+                        <h3>Custom Enchants</h3>
+                        <p>Unique enchantments</p>
+                    </div>
+                    <div class="feature-card clickable" onclick="openWiki()">
+                        <svg class="mc-icon feature-icon" viewBox="0 0 16 16"><use href="#icon-gift"/></svg>
+                        <h3>Vote Crates</h3>
+                        <p>Daily rewards & keys</p>
+                    </div>
+                    <div class="feature-card clickable" onclick="openWiki()">
+                        <svg class="mc-icon feature-icon" viewBox="0 0 16 16"><use href="#icon-shulker-box"/></svg>
+                        <h3>Auctions</h3>
+                        <p>/ah buy & sell</p>
+                    </div>
+                    <div class="feature-card clickable" onclick="openWiki()">
+                        <svg class="mc-icon feature-icon" viewBox="0 0 16 16"><use href="#icon-xp-bottle"/></svg>
+                        <h3>Minigames</h3>
+                        <p>Parkour, Spleef, Events</p>
+                    </div>
+                    <div class="feature-card clickable" onclick="openWiki()">
+                        <svg class="mc-icon feature-icon" viewBox="0 0 16 16"><use href="#icon-compass"/></svg>
+                        <h3>Discord Sync</h3>
+                        <p>Chat bridge & tickets</p>
+                    </div>
+                    <div class="feature-card clickable" onclick="openWiki()">
+                        <svg class="mc-icon feature-icon" viewBox="0 0 16 16"><use href="#icon-shield"/></svg>
+                        <h3>Grief Prevention</h3>
+                        <p>Rollback & protection</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Buttons Container -->
+            <div class="container-box w-full relative">
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                    <div onclick="openStaff()" class="mc-button mc-square clickable">
+                        <div class="glint"></div>
+                        <svg class="icon-svg" viewBox="0 0 16 16" fill="#a0a0a0">
+                            <path d="M8 0L1 3v5c0 4 3 7 7 8 4-1 7-4 7-8V3L8 0zM7 11L4 8l1-1 2 2 4-4 1 1-5 5z"/>
+                        </svg>
+                        <span>THE COUNCIL</span>
+                    </div>
+                    <div class="mc-button mc-square clickable" onclick="openLaw()">
+                        <div class="glint"></div>
+                        <svg class="icon-svg" viewBox="0 0 16 16" fill="#e0e0e0">
+                            <path d="M3 1h10v2H3V1zm0 3h10v10H3V4zm2 2v6h6V6H5z"/>
+                        </svg>
+                        <span>THE LAW</span>
+                    </div>
+                    <div class="mc-button mc-square clickable" onclick="openVote()">
+                        <div class="glint"></div>
+                        <svg class="icon-svg" viewBox="0 0 16 16" fill="#ffcc00">
+                            <path d="M8 1L2 4v3c0 4 3 7 6 8 3-1 6-4 6-8V4L8 1z"/>
+                            <circle cx="8" cy="8" r="2" fill="#000" fill-opacity="0.2"/>
+                        </svg>
+                        <span>VOTE</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <a href="https://discord.com/invite/nJKnwsMQqZ" target="_blank" class="mc-button clickable flex-row gap-3">
+                        <div class="glint"></div>
+                        <svg class="icon-svg mb-0" style="width:24px;height:24px" viewBox="0 0 16 16" fill="#5865F2">
+                            <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025 13.225 13.225 0 0 0-3.257 1.011.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.052.052 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019z"/>
+                        </svg>
+                        DISCORD
+                    </a>
+                    <div class="mc-button clickable flex-row gap-3" onclick="openWiki()">
+                        <div class="glint"></div>
+                        <svg class="icon-svg mb-0" style="width:24px;height:24px" viewBox="0 0 16 16" fill="#f0f0f0">
+                            <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.933-.475-2.203-.665-3.476-.533-1.064.11-2.207.457-3.024.844V2.828zM8.5 12.427c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893V3.028c-.817-.387-1.96-.734-3.024-.844-1.273-.132-2.543.058-3.476.533v9.71z"/>
+                        </svg>
+                        WIKI
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="mc-button clickable flex-row gap-3" onclick="openRanks()">
+                        <div class="glint"></div>
+                        <svg class="icon-svg mb-0" style="width:24px;height:24px" viewBox="0 0 16 16" fill="#00ffcc">
+                            <path d="M2 3l6-2 6 2v6c0 4-6 6-6 6s-6-2-6-6V3z"/>
+                        </svg>
+                        RANKS
+                    </div>
+                    <div class="mc-button clickable flex-row gap-3" onclick="openStore()">
+                        <div class="glint"></div>
+                        <svg class="icon-svg mb-0" style="width:24px;height:24px" viewBox="0 0 16 16" fill="#ff4444">
+                            <path d="M1 3h14v2H1V3zm2 3h10v8H3V6zm3 2v4h4V8H6z"/>
+                        </svg>
+                        STORE
+                    </div>
+                </div>
+            </div>
+
+            <!-- How to Join Section -->
+            <div class="w-full max-w-3xl mx-auto mt-14 mb-8 relative z-10 px-2">
+                <h2 class="section-title"><svg class="mc-icon mc-icon-lg" viewBox="0 0 16 16" style="vertical-align:middle;margin-top:-4px"><use href="#icon-direction"/></svg> HOW TO JOIN</h2>
+                <p class="section-sub mb-6">Get in the game in minutes</p>
+                <div class="space-y-3">
+                    <div class="step-box">
+                        <div class="step-number">1</div>
+                        <span>Launch Minecraft <span class="text-zinc-500">Java Edition</span> version 1.20.4</span>
+                    </div>
+                    <div class="step-box">
+                        <div class="step-number">2</div>
+                        <span>Click <span class="text-yellow-400">Multiplayer</span> → <span class="text-yellow-400">Add Server</span></span>
+                    </div>
+                    <div class="step-box">
+                        <div class="step-number">3</div>
+                        <span>Enter IP: <span class="text-green-400 font-bold">AMAZEMC.ZOHO.TO:8107</span></span>
+                    </div>
+                    <div class="step-box">
+                        <div class="step-number">4</div>
+                        <span>Join and start your economy journey!</span>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button onclick="copyIP()" class="mc-button inline-flex flex-row gap-2 px-6 py-3 clickable text-xl">
+                        <svg class="mc-icon" viewBox="0 0 16 16" style="width:24px;height:24px"><use href="#icon-clipboard"/></svg> COPY IP
+                    </button>
+                </div>
+            </div>
+
+            <!-- Items & Tools Showcase -->
+            <div class="w-full max-w-5xl mx-auto mt-14 mb-8 relative z-10 px-2">
+                <h2 class="section-title"><svg class="mc-icon mc-icon-lg" viewBox="0 0 16 16" style="vertical-align:middle;margin-top:-4px"><use href="#icon-sword"/></svg> ITEMS & TOOLS</h2>
+                <p class="section-sub mb-6">Real Minecraft gear available on AmazeMC</p>
+                <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-3">
+                    <!-- Diamond Sword - Common -->
+                    <div class="tool-card rarity-glow-common">
+                        <div class="tool-svg-wrap">
+                            <svg width="32" height="40" viewBox="0 0 16 24"><path fill="#55ffff" d="M7 0h2v14H7z"/><path fill="#55ffff" d="M5 1h6v2H5zM4 3h8v2H4z"/><rect x="6" y="14" width="4" height="3" fill="#8B4513"/><rect x="5" y="17" width="6" height="2" fill="#8B4513"/><rect x="4" y="19" width="8" height="2" fill="#654321"/><path fill="#fff" fill-opacity=".3" d="M6 1h1v13H6z"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Diamond Sword</div>
+                        <div class="tool-rarity rarity-common">Common</div>
+                    </div>
+                    <!-- Diamond Pickaxe - Common -->
+                    <div class="tool-card rarity-glow-common">
+                        <div class="tool-svg-wrap">
+                            <svg width="32" height="40" viewBox="0 0 16 20"><path fill="#55ffff" d="M8 0l6 6-2 2-6-6z"/><path fill="#55ffff" d="M3 5l6 6-2 2L1 7z"/><rect x="5" y="10" width="4" height="3" fill="#8B4513"/><rect x="5" y="13" width="4" height="2" fill="#654321"/><rect x="4" y="15" width="6" height="2" fill="#654321"/><path fill="#fff" fill-opacity=".3" d="M7 2l4 4-1 1-4-4z"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Diamond Pickaxe</div>
+                        <div class="tool-rarity rarity-common">Common</div>
+                    </div>
+                    <!-- Golden Apple - Uncommon -->
+                    <div class="tool-card rarity-glow-uncommon">
+                        <div class="tool-svg-wrap">
+                            <svg width="32" height="36" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#FFD700"/><circle cx="8" cy="8" r="6" fill="#ffaa00"/><circle cx="8" cy="8" r="3" fill="#FF6666"/><rect x="7" y="0" width="2" height="3" fill="#8B4513"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Golden Apple</div>
+                        <div class="tool-rarity rarity-uncommon">Uncommon</div>
+                    </div>
+                    <!-- Bow - Common -->
+                    <div class="tool-card rarity-glow-common">
+                        <div class="tool-svg-wrap">
+                            <svg width="28" height="38" viewBox="0 0 16 20"><path fill="none" stroke="#8B4513" stroke-width="2.5" d="M3 2C1 6 1 14 3 18"/><path fill="none" stroke="#654321" stroke-width="1.5" d="M13 2C15 6 15 14 13 18"/><path fill="none" stroke="#8B4513" stroke-width="1.5" d="M3 2L13 2"/><path fill="none" stroke="#8B4513" stroke-width="1.5" d="M3 18L13 18"/><path fill="none" stroke="#ddd" stroke-width="1" d="M3 4C5 6 11 6 13 4"/><path fill="none" stroke="#ddd" stroke-width="1" d="M3 16C5 14 11 14 13 16"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Bow</div>
+                        <div class="tool-rarity rarity-common">Common</div>
+                    </div>
+                    <!-- Ender Pearl - Rare -->
+                    <div class="tool-card rarity-glow-rare">
+                        <div class="tool-svg-wrap">
+                            <svg width="30" height="30" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#1a4a4a"/><circle cx="8" cy="8" r="5" fill="#2a6a6a"/><circle cx="8" cy="8" r="3" fill="#3a8a8a"/><circle cx="6" cy="6" r="1.5" fill="#5ababa" opacity=".6"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Ender Pearl</div>
+                        <div class="tool-rarity rarity-rare">Rare</div>
+                    </div>
+                    <!-- Potion of Healing - Uncommon -->
+                    <div class="tool-card rarity-glow-uncommon">
+                        <div class="tool-svg-wrap">
+                            <svg width="28" height="38" viewBox="0 0 16 20"><rect x="6" y="0" width="4" height="3" fill="#aaa"/><rect x="5" y="3" width="6" height="3" fill="#aaa"/><rect x="4" y="6" width="8" height="12" rx="2" fill="#FF4444"/><rect x="4" y="6" width="8" height="5" fill="#CC2222" opacity=".5"/><rect x="5" y="7" width="2" height="2" fill="#fff" opacity=".3"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Healing Potion</div>
+                        <div class="tool-rarity rarity-uncommon">Uncommon</div>
+                    </div>
+                    <!-- Enchanted Book - Epic -->
+                    <div class="tool-card rarity-glow-epic">
+                        <div class="tool-svg-wrap">
+                            <svg width="34" height="34" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1" fill="#a0522d"/><rect x="3" y="4" width="10" height="8" fill="#8B4513"/><rect x="3" y="4" width="5" height="8" fill="#6B3410"/><path fill="none" stroke="#FFD700" stroke-width=".8" d="M5 6l1 1-1 1M8 6l1 1-1 1"/><circle cx="11" cy="7" r=".8" fill="#FFD700"/><circle cx="11" cy="9" r=".6" fill="#FFD700"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Enchanted Book</div>
+                        <div class="tool-rarity rarity-epic">Epic</div>
+                    </div>
+                    <!-- Iron Chestplate - Common -->
+                    <div class="tool-card rarity-glow-common">
+                        <div class="tool-svg-wrap">
+                            <svg width="32" height="34" viewBox="0 0 16 16"><path fill="#ccc" d="M4 2h8v3H4z"/><path fill="#aaa" d="M3 5h10v5H3z"/><path fill="#999" d="M5 10h6v4H5z"/><path fill="#fff" fill-opacity=".3" d="M4 3h1v2H4z"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Iron Chestplate</div>
+                        <div class="tool-rarity rarity-common">Common</div>
+                    </div>
+                    <!-- Compass - Rare -->
+                    <div class="tool-card rarity-glow-rare">
+                        <div class="tool-svg-wrap">
+                            <svg width="32" height="32" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#555"/><circle cx="8" cy="8" r="5" fill="#444"/><polygon points="8,2 10,8 8,14 6,8" fill="#ff4444"/><polygon points="8,2 10,8 8,8 6,8" fill="#ff6666"/><polygon points="2,8 8,6 14,8 8,10" fill="#fff"/><polygon points="2,8 8,6 8,8 8,10" fill="#ddd"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Compass</div>
+                        <div class="tool-rarity rarity-rare">Rare</div>
+                    </div>
+                    <!-- Redstone - Uncommon -->
+                    <div class="tool-card rarity-glow-uncommon">
+                        <div class="tool-svg-wrap">
+                            <svg width="30" height="30" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3" fill="#ff4444"/><circle cx="4" cy="4" r="2" fill="#ff4444"/><circle cx="12" cy="4" r="2" fill="#ff4444"/><circle cx="4" cy="12" r="2" fill="#ff4444"/><circle cx="12" cy="12" r="2" fill="#ff4444"/><path fill="none" stroke="#ff4444" stroke-width="1.5" d="M6 6l2 2M10 6l-2 2M6 10l2-2M10 10l-2-2"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Redstone Dust</div>
+                        <div class="tool-rarity rarity-uncommon">Uncommon</div>
+                    </div>
+                    <!-- Diamond - Legendary -->
+                    <div class="tool-card rarity-glow-legendary">
+                        <div class="tool-svg-wrap">
+                            <svg width="32" height="32" viewBox="0 0 16 16"><polygon points="8,1 14,5 14,11 8,15 2,11 2,5" fill="#55ffff"/><polygon points="8,3 12,5.5 12,10.5 8,13 4,10.5 4,5.5" fill="#33dddd"/><polygon points="8,1 14,5 8,8 2,5" fill="#77ffff" opacity=".6"/><polygon points="8,8 14,5 14,11 8,15 2,11 2,5" fill="#000" opacity=".1"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Diamond</div>
+                        <div class="tool-rarity rarity-legendary">Legendary</div>
+                    </div>
+                    <!-- Emerald - Rare -->
+                    <div class="tool-card rarity-glow-rare">
+                        <div class="tool-svg-wrap">
+                            <svg width="32" height="32" viewBox="0 0 16 16"><polygon points="8,1 14,5 14,11 8,15 2,11 2,5" fill="#44cc44"/><polygon points="8,3 12,5.5 12,10.5 8,13 4,10.5 4,5.5" fill="#33aa33"/><polygon points="8,1 14,5 8,8 2,5" fill="#66ee66" opacity=".6"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Emerald</div>
+                        <div class="tool-rarity rarity-rare">Rare</div>
+                    </div>
+                    <!-- Netherite Sword - Legendary -->
+                    <div class="tool-card rarity-glow-legendary">
+                        <div class="tool-svg-wrap">
+                            <svg width="32" height="40" viewBox="0 0 16 24"><path fill="#444" d="M7 0h2v14H7z"/><path fill="#555" d="M5 1h6v2H5zM4 3h8v2H4z"/><rect x="6" y="14" width="4" height="3" fill="#8B4513"/><rect x="5" y="17" width="6" height="2" fill="#8B4513"/><rect x="4" y="19" width="8" height="2" fill="#654321"/><path fill="#fff" fill-opacity=".15" d="M6 1h1v13H6z"/><path fill="#FFD700" fill-opacity=".4" d="M5 3l1-2h4l1 2z"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Netherite Sword</div>
+                        <div class="tool-rarity rarity-legendary">Legendary</div>
+                    </div>
+                    <!-- Totem - Epic -->
+                    <div class="tool-card rarity-glow-epic">
+                        <div class="tool-svg-wrap">
+                            <svg width="28" height="38" viewBox="0 0 16 20"><rect x="5" y="0" width="6" height="4" rx="1" fill="#FFD700"/><rect x="4" y="4" width="8" height="8" rx="1" fill="#FFD700"/><rect x="5" y="5" width="6" height="6" fill="#ffaa00"/><circle cx="8" cy="8" r="2" fill="#FF4444"/><rect x="5" y="12" width="6" height="6" rx="1" fill="#FFD700"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Totem of Undying</div>
+                        <div class="tool-rarity rarity-epic">Epic</div>
+                    </div>
+                    <!-- Trident - Epic -->
+                    <div class="tool-card rarity-glow-epic">
+                        <div class="tool-svg-wrap">
+                            <svg width="28" height="42" viewBox="0 0 16 24"><path fill="#55ffff" d="M7 0l2 2v8l-2 2V0zM5 3l2 2v4l-2-2V3zM9 3l2 2v4l-2-2V3z"/><rect x="6" y="12" width="4" height="4" fill="#55ffff"/><rect x="5" y="16" width="6" height="3" fill="#55ffff"/><rect x="4" y="19" width="8" height="3" fill="#339999"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Trident</div>
+                        <div class="tool-rarity rarity-epic">Epic</div>
+                    </div>
+                    <!-- Elytra - Legendary -->
+                    <div class="tool-card rarity-glow-legendary">
+                        <div class="tool-svg-wrap">
+                            <svg width="36" height="32" viewBox="0 0 16 16"><path fill="#ccc" d="M2 2c2 2 4 4 6 4s4-2 6-4v4c-2 2-4 4-6 4S4 8 2 6V2z"/><path fill="#aaa" d="M2 6c1 3 3 5 6 6s5-3 6-6"/><path fill="#888" d="M4 8c1 2 3 3 4 3s3-1 4-3"/><path fill="#666" d="M2 2l2-1v3l-2-2zM14 2l-2-1v3l2-2z"/></svg>
+                        </div>
+                        <div class="tool-name text-zinc-300">Elytra</div>
+                        <div class="tool-rarity rarity-legendary">Legendary</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Server Stats -->
+            <div class="w-full max-w-4xl mx-auto mt-8 mb-8 relative z-10 px-2">
+                <h2 class="section-title"><svg class="mc-icon mc-icon-lg" viewBox="0 0 16 16" style="vertical-align:middle;margin-top:-4px"><use href="#icon-chart"/></svg> SERVER STATS</h2>
+                <p class="section-sub mb-6">Live server information</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-players">?</div>
+                        <div class="stat-label">Players Online</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-max">?</div>
+                        <div class="stat-label">Max Players</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-version">1.20.4</div>
+                        <div class="stat-label">Version</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-uptime" style="font-size:1.5rem">---</div>
+                        <div class="stat-label">Status</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 mb-10 text-center text-zinc-400 max-w-lg relative z-10">
+                <p class="mb-1 text-xl">Build your empire, trade with others, and conquer the wilderness in our custom economy world.</p>
+                <p class="text-xs uppercase tracking-widest opacity-50">Version 1.20.4 • Join Now</p>
+            </div>
+        </main>
+
+        <!-- Dirt Divider -->
+        <div class="dirt-divider w-full relative z-10"></div>
+
+        <footer class="py-12 text-center text-zinc-400 relative" style="background:#0a0a0a">
+            <div class="mc-panel max-w-3xl mx-auto relative z-10 px-2" style="background:rgba(15,15,15,0.95)">
+                <div class="p-6">
+                    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-5 text-lg">
+                        <a href="https://discord.com/invite/nJKnwsMQqZ" target="_blank" class="hover:text-white hover:text-glow transition clickable">Discord</a>
+                        <button onclick="openVote()" class="hover:text-white hover:text-glow transition clickable">Vote</button>
+                        <button onclick="openRanks()" class="hover:text-white hover:text-glow transition clickable">Ranks</button>
+                        <button onclick="openStore()" class="hover:text-white hover:text-glow transition clickable">Store</button>
+                        <button onclick="openStaff()" class="hover:text-white hover:text-glow transition clickable">Staff</button>
+                    </div>
+                    <div class="stone-divider w-48 mx-auto mb-5"></div>
+                    <p class="text-sm uppercase tracking-widest text-zinc-600">Not an official Minecraft product</p>
+                    <p class="text-xs mt-2 text-zinc-700">&copy; 2026 AmazeMC. All rights reserved.</p>
+                </div>
+            </div>
+            <div class="credit-box absolute bottom-4 right-4 z-20">MADE BY NOTHYPERBOIZ1</div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
